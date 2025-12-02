@@ -21,35 +21,27 @@ mp_drawing = mp.solutions.drawing_utils
 
 
 def extract_hand_features(hand_landmarks):
-    """
-    Превращаем 21 точку руки в один вектор признаков.
-    Берём координаты (x, y, z), вычитаем запястье, нормируем на размер руки.
-    """
+
     points = []
     for lm in hand_landmarks.landmark:
         points.append([lm.x, lm.y, lm.z])
     points = np.array(points)
 
-    # запястье (landmark 0)
+    # запястье
     wrist = points[0]
     rel = points - wrist
 
-    # "размер" руки: расстояние от запястья до средней фаланги среднего пальца (9-я точка)
+    # "размер" руки: расстояние от запястья до средней фаланги среднего пальца
     hand_size = np.linalg.norm(points[9] - wrist)
     if hand_size < 1e-6:
         hand_size = 1.0
 
     rel /= hand_size
-    # превращаем в одномерный вектор длиной 63
+    # превращаем в одномерный вектор
     return rel.flatten()
 
 
 def collect_mode(letter):
-    """
-    Режим сбора данных.
-    Показываешь букву жестом, нажимаешь 'c' — кадр сохраняется в CSV.
-    Нажми 'q' для выхода.
-    """
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("Не удалось открыть камеру")
@@ -122,9 +114,6 @@ def collect_mode(letter):
 
 
 def train_mode():
-    """
-    Режим обучения KNN по CSV.
-    """
     if not os.path.isfile(DATASET_CSV):
         print(f"Нет файла {DATASET_CSV}. Сначала собери данные (--mode collect).")
         return
@@ -134,7 +123,7 @@ def train_mode():
 
     with open(DATASET_CSV, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
-        header = next(reader)  # пропускаем заголовок
+        header = next(reader)
         for row in reader:
             *features, label = row
             X.append([float(v) for v in features])
@@ -171,23 +160,15 @@ def draw_text_pil(frame, text, x=10, y=40, font_size=48, color=(0, 255, 0)):
     # convert OpenCV (BGR) → PIL (RGB)
     img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img_pil)
-
-    # IMPORTANT: нужен шрифт, поддерживающий кириллицу
-    # Windows: C:/Windows/Fonts/arial.ttf
     font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", font_size)
 
-    # рисуем текст
     draw.text((x, y), text, font=font, fill=(color[0], color[1], color[2]))
 
-    # convert PIL → OpenCV
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 
 
 def run_mode():
-    """
-    Онлайн-режим: камера + Mediapipe Hands + модель KNN → буква на экране.
-    """
     if not os.path.isfile(MODEL_PATH):
         print(f"Нет модели {MODEL_PATH}. Сначала обучи её (--mode train).")
         return
@@ -237,7 +218,6 @@ def run_mode():
                 print("Ошибка предсказания:", e)
                 predicted_letter = "?"
 
-        # ======= ЛОГИКА УДЕРЖАНИЯ 2 СЕКУНД ========
         current_time = time.time()
 
         if predicted_letter == last_letter:
@@ -248,13 +228,11 @@ def run_mode():
         else:
             last_letter = predicted_letter
             last_change_time = current_time
-        # ==========================================
 
-        # вывод ПРАВИЛЬНОЙ информации через PIL
         frame = draw_text_pil(frame, f"Текущая: {predicted_letter}", x=10, y=10)
         frame = draw_text_pil(frame, f"Текст: {stable_letter}", x=10, y=70)
 
-        cv2.imshow("Sign to Russian letter", frame)
+        cv2.imshow("USLT", frame)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
@@ -279,7 +257,7 @@ def main():
     parser.add_argument(
         "--letter",
         type=str,
-        help="Буква (метка), которую собираем в режиме collect (например, А, Б, В...)",
+        help="Буква, которую собираем в режиме collect (например, А, Б, В...)",
     )
 
     args = parser.parse_args()

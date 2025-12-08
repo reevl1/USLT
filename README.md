@@ -1,9 +1,9 @@
-# USLT — Unified Sign Language Translator
-Добро пожаловать в **USLT** — лёгкий, понятный и дружелюбный инструмент для распознавания русского жестового языка с помощью обученной модели KNN.  
+# Surdo — переводчик с жестового языка
+Добро пожаловать в **Surdo** — лёгкий, понятный и дружелюбный инструмент для распознавания русского жестового языка с помощью обученной модели KNN.  
 Это социальный проект, направленный на интеграцию людей, которые общаются на жестовом языке, в повседневную жизнь.
 
 # МИНИМАЛЬНЫЕ СИСТЕМНЫЕ ТРЕБОВАНИЯ
-Для стабильной работы USLT рекомендуется иметь:
+Для стабильной работы Surdo рекомендуется иметь:
 - **Операционная система:** Linux, macOS или Windows  
 - **Python:** версия 3.8 или выше  
 - **RAM:** минимум 4 GB  
@@ -16,7 +16,7 @@
 **1 шаг:** клонирование репозитория<br>
 Создайте папку, в которой будет храниться проект и перейдите в неё в терминале. После этого выполните следующую команду:
 ```bash
-git clone https://github.com/reevl1/USLT.git
+git clone https://github.com/reevl1/Surdo.git
 cd USLT
 ```
 
@@ -47,19 +47,19 @@ pip install opencv-python mediapipe numpy scikit-learn joblib Pillow
 ## Linux / macOS
 ```bash
 source venv/bin/activate
-python3 uslt.py --mode run
+python3 surdo.py --mode run
 ```
 
 ## Windows (cmd)
 ```bash
 venv\Scripts\activate
-python uslt.py --mode run
+python surdo.py --mode run
 ```
 
 ## Windows (PowerShell)
 ```bash
 .\venv\Scripts\Activate.ps1
-python uslt.py --mode run
+python surdo.py --mode run
 ```
 
 # РЕЖИМЫ РАБОТЫ
@@ -68,7 +68,7 @@ python uslt.py --mode run
 **collect** - собирает данные для модели, имеет обязательный параметр **--letter**, который говорит какую букву мы хотим собрать в режиме **collect**, в остальных режимах не используется
 Пример:
 ```bash
-python3 uslt.py --mode collect --letter А
+python3 surdo.py --mode collect --letter А
 ```
 1) Запустится веб-камера.
 2) Показывайте жест буквы "А" (или другой буквы, которая предана как аргумент параметра **--letter**), нажимайте "c" для сохранения кадра.
@@ -78,7 +78,7 @@ python3 uslt.py --mode collect --letter А
 **train** - обучает модель, требует минимум 2 буквы для обучения.
 Пример:
 ```bash
-python3 uslt.py --mode train
+python3 surdo.py --mode train
 ```
 1) Скрипт проверяет наличие датасета sign_letters_dataset.csv.
 2) Разбивает данные на тренировочную и тестовую выборки.
@@ -89,7 +89,7 @@ python3 uslt.py --mode train
 **run** - распознаёт жесты в реальном времени, базовый сценарий исполнения программы.
 Пример:
 ```bash
-python3 uslt.py --mode run
+python3 surdo.py --mode run
 ```
 1) Загружает сохранённую модель sign_letters_knn.pkl.
 2) Запускает веб-камеру для распознавания жестов в реальном времени.
@@ -99,7 +99,7 @@ python3 uslt.py --mode run
 # СТРУКТУРА ПРОЕКТА
 | Файл                      | Назначение                                              |
 |---------------------------|---------------------------------------------------------|
-| uslt.py                   | Основной скрипт: загружает модель и обрабатывает данные |
+| surdo.py                   | Основной скрипт: загружает модель и обрабатывает данные |
 | sign_letters_dataset.csv  | Датасет с признаками жестов и буквами                   |
 | sign_letters_knn.pkl      | Обученная модель KNN                                    |
 | README.md                 | Документация проекта                                    |
